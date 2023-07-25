@@ -1,6 +1,7 @@
 package br.com.project.ECommerce.service;
 
-import br.com.project.ECommerce.dto.EnderecoDTO;
+import br.com.project.ECommerce.dto.enderecos.EnderecoDTO;
+import br.com.project.ECommerce.mapper.Mapper;
 import br.com.project.ECommerce.model.Cidade;
 import br.com.project.ECommerce.model.Endereco;
 import br.com.project.ECommerce.model.Estado;
@@ -12,8 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.logging.Logger;
+
 @Service
 public class EnderecoServices {
+
+    private static final Logger log = Logger.getLogger(EnderecoServices.class.getName());
 
     @Autowired
     private EnderecoRepository enderecoRepository;
@@ -27,9 +32,29 @@ public class EnderecoServices {
     @Autowired
     private ClienteRepository clienteRepository;
 
-    public ResponseEntity registrarEndereco(EnderecoDTO enderecoDTO){
+    public ResponseEntity<EnderecoDTO> registrarEndereco(EnderecoDTO enderecoDTO){
 
-        var cliente = clienteRepository.findById(1L).orElseThrow();
+        var cliente = clienteRepository.findByUserEmail("j@gmail.com").orElseThrow();
+
+        if (!cidadeRepository.existsByNomeAndEstadoNome(enderecoDTO.getCidadeNome(), enderecoDTO.getCidadeEstadoNome()))
+            registrarCidadeEstado(enderecoDTO);
+
+        var cidade = cidadeRepository.findByNome(enderecoDTO.getCidadeNome()).orElseThrow();
+
+        var endereco = Mapper.parseObject(enderecoDTO, Endereco.class);
+
+        endereco.setCliente(cliente);
+        endereco.setCidade(cidade);
+
+        enderecoRepository.save(endereco);
+
+        var dto = Mapper.parseObject(endereco, EnderecoDTO.class);
+
+        return ResponseEntity.ok(dto);
+    }
+
+    private void registrarCidadeEstado(EnderecoDTO enderecoDTO){
+        log.info("Registrando Cidade e Estado");
 
         var estado = Estado.builder()
                 .nome(enderecoDTO.getCidadeEstadoNome())
@@ -43,19 +68,5 @@ public class EnderecoServices {
                 .build();
 
         cidadeRepository.save(cidade);
-
-        var endereco = Endereco.builder()
-                .logradouro(enderecoDTO.getLogradouro())
-                .cep(enderecoDTO.getCep())
-                .bairro(enderecoDTO.getBairro())
-                .complemento(enderecoDTO.getComplemento())
-                .numero(enderecoDTO.getNumero())
-                .cliente(cliente)
-                .cidade(cidade)
-                .build();
-
-        enderecoRepository.save(endereco);
-
-        return ResponseEntity.ok().build();
     }
 }

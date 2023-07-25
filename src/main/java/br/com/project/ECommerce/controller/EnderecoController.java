@@ -1,6 +1,6 @@
 package br.com.project.ECommerce.controller;
 
-import br.com.project.ECommerce.dto.EnderecoDTO;
+import br.com.project.ECommerce.dto.enderecos.EnderecoDTO;
 import br.com.project.ECommerce.service.EnderecoServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +17,7 @@ public class EnderecoController {
     private EnderecoServices enderecoServices;
 
     @PostMapping(value = "/registrar")
-    public ResponseEntity registrarEndereco(@RequestBody EnderecoDTO enderecoDTO){
+    public ResponseEntity<EnderecoDTO> registrarEndereco(@RequestBody EnderecoDTO enderecoDTO){
         return enderecoServices.registrarEndereco(enderecoDTO);
     }
 }

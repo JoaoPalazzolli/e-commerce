@@ -1,4 +1,4 @@
-package br.com.project.ECommerce.dto;
+package br.com.project.ECommerce.dto.enderecos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
@@ -18,6 +18,7 @@ public class EnderecoDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    private Long id;
     private String logradouro;
     private String numero;
     private String complemento;

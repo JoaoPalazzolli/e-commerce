@@ -28,11 +28,11 @@ public class Cliente implements Serializable {
     @Column(name = "nome_completo", nullable = false)
     private String nomeCompleto;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String cpf;
 
     @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
     @OneToMany(mappedBy = "cliente")
