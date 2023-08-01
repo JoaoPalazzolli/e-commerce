@@ -1,4 +1,4 @@
-package br.com.project.ECommerce.dto.enderecos;
+package br.com.project.ECommerce.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

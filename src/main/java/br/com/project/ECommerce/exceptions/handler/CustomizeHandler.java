@@ -1,5 +1,6 @@
 package br.com.project.ECommerce.exceptions.handler;
 
+import br.com.project.ECommerce.service.exceptions.ConflictExceptions;
 import br.com.project.ECommerce.exceptions.ResponseExceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,15 @@ public class CustomizeHandler extends ResponseEntityExceptionHandler {
                         request.getDescription(false));
 
         return new ResponseEntity<>(responseException, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(ConflictExceptions.class)
+    public ResponseEntity<ResponseExceptions> conflictExceptionsHandler(Exception ex, WebRequest request){
+
+        var responseException = new ResponseExceptions(LocalDateTime.now(), ex.getMessage(),
+                request.getDescription(false));
+
+        return new ResponseEntity<>(responseException, HttpStatus.CONFLICT);
     }
 
 }
