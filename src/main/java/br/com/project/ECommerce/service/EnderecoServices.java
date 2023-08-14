@@ -1,5 +1,6 @@
 package br.com.project.ECommerce.service;
 
+import br.com.project.ECommerce.controller.EnderecoController;
 import br.com.project.ECommerce.dto.EnderecoDTO;
 import br.com.project.ECommerce.service.exceptions.ConflictExceptions;
 import br.com.project.ECommerce.mapper.Mapper;
@@ -11,18 +12,26 @@ import br.com.project.ECommerce.repositories.ClienteRepository;
 import br.com.project.ECommerce.repositories.EnderecoRepository;
 import br.com.project.ECommerce.repositories.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.logging.Logger;
 
 @Service
 public class EnderecoServices {
 
-    private static final Logger log = Logger.getLogger(EnderecoServices.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(EnderecoServices.class.getName());
 
     @Autowired
     private EnderecoRepository enderecoRepository;
@@ -36,32 +45,41 @@ public class EnderecoServices {
     @Autowired
     private ClienteRepository clienteRepository;
 
+    @Autowired
+    private PagedResourcesAssembler<EnderecoDTO> assembler;
+
     @Transactional(readOnly = true)
-    public ResponseEntity<List<EnderecoDTO>> findAll(){
-        log.info("Procurando Todos os Endereços");
+    public ResponseEntity<PagedModel<EntityModel<EnderecoDTO>>> findAll(Integer page, Integer size, String direction, String orderBy){
+        LOGGER.info("Procurando Todos os Endereços");
 
-        var endereco = enderecoRepository.findAll();
-        var enderecoDTO = Mapper.parseListObjects(endereco, EnderecoDTO.class);
+        var enderecoDTO = enderecoRepository.findAll(pageable(page, size, direction, orderBy))
+                .map(x -> Mapper.parseObject(x, EnderecoDTO.class));
 
-        return ResponseEntity.ok(enderecoDTO);
+        enderecoDTO.map(x -> x.add(linkTo(methodOn(EnderecoController.class).findById(x.getId())).withSelfRel()));
+
+        var link = linkTo(methodOn(EnderecoController.class).findAll(page, size, direction, orderBy)).withSelfRel();
+
+        return ResponseEntity.ok(assembler.toModel(enderecoDTO, link));
     }
 
     @Transactional(readOnly = true)
     public ResponseEntity<EnderecoDTO> findById(Long id){
-        log.info("Procurando Endereço Pelo ID");
+        LOGGER.info("Procurando Endereço Pelo ID");
 
         var endereco = enderecoRepository.findById(id).orElseThrow();
 
         var enderecoDTO = Mapper.parseObject(endereco, EnderecoDTO.class);
+
+        enderecoDTO.add(linkTo(methodOn(EnderecoController.class).findById(id)).withSelfRel());
 
         return ResponseEntity.ok(enderecoDTO);
     }
 
     @Transactional(readOnly = false)
     public ResponseEntity<EnderecoDTO> createAddress(EnderecoDTO enderecoDTO) {
-        log.info("Registrando Endereço");
+        LOGGER.info("Registrando Endereço");
 
-        var cliente = clienteRepository.findByUserEmail("fortinitefoda12@gmail.com").orElseThrow();
+        var cliente = clienteRepository.findByUserEmail("alemão@gmail.com").orElseThrow();
 
         if (!cidadeRepository.existsByNomeAndEstadoNome(enderecoDTO.getCidadeNome(), enderecoDTO.getCidadeEstadoNome()))
             registrarCidade(enderecoDTO);
@@ -82,16 +100,18 @@ public class EnderecoServices {
 
         var dto = Mapper.parseObject(endereco, EnderecoDTO.class);
 
-        log.info("Endereço Registrado com sucesso");
+        dto.add(linkTo(methodOn(EnderecoController.class).findById(dto.getId())).withSelfRel());
+
+        LOGGER.info("Endereço Registrado com sucesso");
 
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
     @Transactional(readOnly = false)
     public ResponseEntity<EnderecoDTO> updateAddress(EnderecoDTO enderecoDTO){
-        log.info("Atualizando Endereço");
+        LOGGER.info("Atualizando Endereço");
 
-        var cliente = clienteRepository.findByUserEmail("fortinitefoda12@gmail.com").orElseThrow();
+        var cliente = clienteRepository.findByUserEmail("alemão@gmail.com").orElseThrow();
 
         if (!cidadeRepository.existsByNomeAndEstadoNome(enderecoDTO.getCidadeNome(), enderecoDTO.getCidadeEstadoNome()))
             registrarCidade(enderecoDTO);
@@ -116,20 +136,27 @@ public class EnderecoServices {
 
         var dto = Mapper.parseObject(endereco, EnderecoDTO.class);
 
+        dto.add(linkTo(methodOn(EnderecoController.class).findById(dto.getId())).withSelfRel());
+
+        LOGGER.info("Endereço Atualizado com Sucesso");
+
         return ResponseEntity.ok(dto);
     }
 
     @Transactional(readOnly = false)
     public ResponseEntity<?> deleteAddress(Long id){
+        LOGGER.info("Deletando Endereço");
+
         var endereco = enderecoRepository.findById(id).orElseThrow();
 
         enderecoRepository.delete(endereco);
 
+        LOGGER.info("Endereço Deletado com Sucesso");
         return ResponseEntity.noContent().build();
     }
 
     private void registrarCidade(EnderecoDTO enderecoDTO){
-        log.info("Registrando Cidade");
+        LOGGER.info("Registrando Cidade");
 
         if (!estadoRepository.existsByNome(enderecoDTO.getCidadeEstadoNome()))
             registrarEstado(enderecoDTO);
@@ -143,16 +170,22 @@ public class EnderecoServices {
 
         cidadeRepository.save(cidade);
 
-        log.info("Cidade e Estado Registrado com sucesso");
+        LOGGER.info("Cidade e Estado Registrado com sucesso");
     }
 
     private void registrarEstado(EnderecoDTO enderecoDTO){
-        log.info("Registrando Estado");
+        LOGGER.info("Registrando Estado");
 
         var estado = Estado.builder()
                 .nome(enderecoDTO.getCidadeEstadoNome())
                 .build();
 
         estadoRepository.save(estado);
+    }
+
+    private Pageable pageable(Integer page, Integer size, String direction, String orderBy){
+        var sortDirection = direction.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        return PageRequest.of(page, size, Sort.by(sortDirection, orderBy));
     }
 }

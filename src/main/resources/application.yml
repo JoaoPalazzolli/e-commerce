@@ -8,7 +8,7 @@ cors:
 #security:
 #  jwt:
 #    token:
-#      secret-key: 743677397A244326452948404D635166546A576E5A7234753778214125442A47
+#      secret-key: secret
 #      expire-length: 3600000
 spring:
   datasource:
@@ -26,7 +26,7 @@ spring:
 springdoc:
   pathsToMatch:
     - /auth/**
-    - /api/**/v1/**
+    - /api/**
     - /admin/**
   swagger-ui:
     use-root-path: true
