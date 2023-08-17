@@ -8,12 +8,12 @@ cors:
 #security:
 #  jwt:
 #    token:
-#      secret-key: secret
+#      secret-key: 743677397A244326452948404D635166546A576E5A7234753778214125442A47
 #      expire-length: 3600000
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/e-commerce?useTimezone=true&serverTimezone=UTC&useSSL=false
+    url: jdbc:mysql://localhost:3307/ecommerce?useTimezone=true&serverTimezone=UTC&useSSL=true
     username: root
     password: admin
   jpa:

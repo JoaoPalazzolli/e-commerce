@@ -19,8 +19,5 @@ public interface ProdutoRepository extends JpaRepository<Produto, Long> {
     Page<Produto> searchByName(@Param(value = "nomeProduto") String nomeProduto, Pageable pageable);
 
     @Transactional(readOnly = true)
-    /*@Query("""
-            select p from Produto p where p.categorias.id = categoryId
-            """) */
     Page<Produto> findByCategoriasId(Long categoryId, Pageable pageable);
 }
