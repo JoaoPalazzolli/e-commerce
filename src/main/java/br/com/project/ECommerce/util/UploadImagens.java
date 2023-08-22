@@ -11,7 +11,7 @@ public class UploadImagens {
 
     private static final Logger LOGGER = Logger.getLogger(UploadImagens.class.getName());
 
-    private static final String CAMINHO_ARQUIVO = "";
+    private static final String CAMINHO_ARQUIVO = "C:\\Users\\Joao Pedro\\Desktop\\e-commerce\\src\\main\\resources\\static\\images";
 
     public static void uploadProductImagens(MultipartFile imagem){
         LOGGER.info("Fazendo upload da imagem");
