@@ -2,13 +2,24 @@ version: '3.8'
 
 services:
   mysql:
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 45s
+      interval: 10s
+      retries: 5
     image: mysql:latest
     restart: always
     container_name: mysql-ecommerce
     environment:
-      MYSQL_ROOT_PASSWORD: admin
-      MYSQL_DATABASE: ecommerce
+      MYSQL_USER: ${DATABASE_USER}
+      MYSQL_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_ROOT_USER: ${DATABASE_USERNAME}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_DATABASE: ${DATABASE_SCHEMA}
     ports:
-      - "3307:3306"
+      - ${DATABASE_PORT}:3306
     volumes:
-      - ./mysql-data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
+
+volumes:
+  mysql-data:
