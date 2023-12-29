@@ -157,31 +157,26 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-
-<!--			<plugin>-->
-<!--				<groupId>org.flywaydb</groupId>-->
-<!--				<artifactId>flyway-maven-plugin</artifactId>-->
-<!--				<configuration>-->
-<!--					<url>-->
-<!--						jdbc:mysql://localhost:3307/ecommerce?useTimezone=true&amp;serverTimezone=UTC&amp;useSSL=true</url>-->
-<!--					<user>root</user>-->
-<!--					<password>admin</password>-->
-<!--				</configuration>-->
-<!--				<dependencies>-->
-<!--					<dependency>-->
-<!--						<groupId>mysql</groupId>-->
-<!--						<artifactId>mysql-connector-java</artifactId>-->
-<!--						<version>8.0.33</version>-->
-<!--						<exclusions>-->
-<!--							<exclusion>-->
-<!--								<artifactId>slf4j-api</artifactId>-->
-<!--								<groupId>org.slf4j</groupId>-->
-<!--							</exclusion>-->
-<!--						</exclusions>-->
-<!--					</dependency>-->
-<!--				</dependencies>-->
-<!--			</plugin>-->
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<build.profile.id>dev</build.profile.id>
+				<profile.active>dev</profile.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<build.profile.id>prod</build.profile.id>
+				<profile.active>prod</profile.active>
+			</properties>
+		</profile>
+	</profiles>
 </project>
