@@ -1,16 +1,16 @@
 package br.com.project.ECommerce.service.auth;
 
-import br.com.project.ECommerce.dto.auth.RegisterRequestDTO;
-import br.com.project.ECommerce.model.Cliente;
+import br.com.project.ECommerce.dto.auth.RegisterPessoaFisicaDTO;
+import br.com.project.ECommerce.dto.auth.RegisterPessoaJuridicaDTO;
+import br.com.project.ECommerce.model.PessoaFisica;
+import br.com.project.ECommerce.model.PessoaJuridica;
 import br.com.project.ECommerce.model.User;
-import br.com.project.ECommerce.repositories.ClienteRepository;
 import br.com.project.ECommerce.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 @Service
@@ -19,34 +19,55 @@ public class AuthServices {
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private ClienteRepository clienteRepository;
+    @Transactional
+    public ResponseEntity<?> signupPessoaFisica(RegisterPessoaFisicaDTO data){
 
-    @Transactional(readOnly = false)
-    public ResponseEntity signup(RegisterRequestDTO data){
+        // verificar se já existe email
 
-        Set<String> telefones = Set.of(data.getTelefones());
-
-        var user = User.builder()
-                .email(data.getEmail())
-                .password(data.getPassword())
-                .build();
-
-        userRepository.save(user);
-
-        var cliente = Cliente.builder()
-                .cpf(data.getCpf())
+        var cliente = PessoaFisica.builder()
                 .nomeCompleto(data.getNomeCompleto())
-                .telefones(telefones)
+                .email(data.getEmail())
+                .password(data.getPassword()) // temporario
+                .telefones(data.getTelefones())
+                .cpf(data.getCpf())
                 .dataNascimento(data.getDataNascimento())
-                .contaCriada(LocalDateTime.now())
-                .user(user)
                 .build();
 
-        clienteRepository.save(cliente);
+        userRepository.save(cliente);
 
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok().build();
     }
 
+    @Transactional
+    public ResponseEntity<?> signupPessoaJuridica(RegisterPessoaJuridicaDTO data){
+
+        // verificar se já existe email
+
+        var cliente = PessoaJuridica.builder()
+                .nomeCompleto(data.getNomeCompleto())
+                .email(data.getEmail())
+                .password(data.getPassword()) // temporario
+                .telefones(data.getTelefones())
+                .cnpj(data.getCnpj())
+                .nomeFantasia(data.getNomeFantasia())
+                .razaoSocial(data.getRazaoSocial())
+                .build();
+
+        userRepository.save(cliente);
+
+        return ResponseEntity.ok().build();
+    }
+
+
+    public ResponseEntity<?> teste(){
+        var u = userRepository.findById(2L).orElseThrow();
+        if(u instanceof PessoaJuridica){
+            System.out.println("PESSOA JURI");
+        } else {
+            System.out.println("PESSOA FISICA");
+        }
+
+        return ResponseEntity.ok(userRepository.findAll());
+    }
 
 }
