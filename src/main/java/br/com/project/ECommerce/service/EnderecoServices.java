@@ -2,13 +2,13 @@ package br.com.project.ECommerce.service;
 
 import br.com.project.ECommerce.controller.EnderecoController;
 import br.com.project.ECommerce.dto.EnderecoDTO;
+import br.com.project.ECommerce.repositories.UserRepository;
 import br.com.project.ECommerce.service.exceptions.ConflictExceptions;
 import br.com.project.ECommerce.mapper.Mapper;
 import br.com.project.ECommerce.model.Cidade;
 import br.com.project.ECommerce.model.Endereco;
 import br.com.project.ECommerce.model.Estado;
 import br.com.project.ECommerce.repositories.CidadeRepository;
-import br.com.project.ECommerce.repositories.ClienteRepository;
 import br.com.project.ECommerce.repositories.EnderecoRepository;
 import br.com.project.ECommerce.repositories.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class EnderecoServices {
     private EstadoRepository estadoRepository;
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private PagedResourcesAssembler<EnderecoDTO> assembler;
@@ -51,6 +51,8 @@ public class EnderecoServices {
     @Transactional(readOnly = true)
     public ResponseEntity<PagedModel<EntityModel<EnderecoDTO>>> findAll(Integer page, Integer size, String direction, String orderBy){
         LOGGER.info("Procurando Todos os Endereços");
+
+        // ver apenas com o id do user...
 
         var enderecoDTO = enderecoRepository.findAll(pageable(page, size, direction, orderBy))
                 .map(x -> Mapper.parseObject(x, EnderecoDTO.class));
@@ -75,11 +77,11 @@ public class EnderecoServices {
         return ResponseEntity.ok(enderecoDTO);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional
     public ResponseEntity<EnderecoDTO> createAddress(EnderecoDTO enderecoDTO) {
         LOGGER.info("Registrando Endereço");
 
-        var cliente = clienteRepository.findByUserEmail("alemão@gmail.com").orElseThrow();
+        var user = userRepository.findByEmail("alemão@gmail.com").orElseThrow();
 
         if (!cidadeRepository.existsByNomeAndEstadoNome(enderecoDTO.getCidadeNome(), enderecoDTO.getCidadeEstadoNome()))
             registrarCidade(enderecoDTO);
@@ -88,11 +90,11 @@ public class EnderecoServices {
 
         var endereco = Mapper.parseObject(enderecoDTO, Endereco.class);
 
-        endereco.setCliente(cliente);
+        endereco.setUser(user);
         endereco.setCidade(cidade);
 
-        if(enderecoRepository.existsByClienteIdAndCepAndNumeroAndCidadeNomeAndCidadeEstadoNome(
-                cliente.getId(), enderecoDTO.getCep(),
+        if(enderecoRepository.existsByUserIdAndCepAndNumeroAndCidadeNomeAndCidadeEstadoNome(
+                user.getId(), enderecoDTO.getCep(),
                 enderecoDTO.getNumero(), enderecoDTO.getCidadeNome(), enderecoDTO.getCidadeEstadoNome()))
             throw new ConflictExceptions();
 
@@ -111,7 +113,7 @@ public class EnderecoServices {
     public ResponseEntity<EnderecoDTO> updateAddress(EnderecoDTO enderecoDTO){
         LOGGER.info("Atualizando Endereço");
 
-        var cliente = clienteRepository.findByUserEmail("alemão@gmail.com").orElseThrow();
+        var user = userRepository.findByEmail("alemão@gmail.com").orElseThrow();
 
         if (!cidadeRepository.existsByNomeAndEstadoNome(enderecoDTO.getCidadeNome(), enderecoDTO.getCidadeEstadoNome()))
             registrarCidade(enderecoDTO);
@@ -123,10 +125,10 @@ public class EnderecoServices {
         endereco = Mapper.parseObject(enderecoDTO, Endereco.class);
 
         endereco.setCidade(cidade);
-        endereco.setCliente(cliente);
+        endereco.setUser(user);
 
-        if(enderecoRepository.existsByClienteIdAndCepAndNumeroAndCidadeNomeAndCidadeEstadoNomeAndLogradouroAndComplementoAndBairro(
-                cliente.getId(), enderecoDTO.getCep(), enderecoDTO.getNumero(), enderecoDTO.getCidadeNome(),
+        if(enderecoRepository.existsByUserIdAndCepAndNumeroAndCidadeNomeAndCidadeEstadoNomeAndLogradouroAndComplementoAndBairro(
+                user.getId(), enderecoDTO.getCep(), enderecoDTO.getNumero(), enderecoDTO.getCidadeNome(),
                 enderecoDTO.getCidadeEstadoNome(), enderecoDTO.getLogradouro(), enderecoDTO.getComplemento(),
                 enderecoDTO.getBairro()
         ))
@@ -147,6 +149,7 @@ public class EnderecoServices {
     public ResponseEntity<?> deleteAddress(Long id){
         LOGGER.info("Deletando Endereço");
 
+        // id do user, deletar endereço tendo o id do user tbm
         var endereco = enderecoRepository.findById(id).orElseThrow();
 
         enderecoRepository.delete(endereco);

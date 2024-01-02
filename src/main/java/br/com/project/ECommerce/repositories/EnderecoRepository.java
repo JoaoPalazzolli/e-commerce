@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
 
-    Boolean existsByClienteIdAndCepAndNumeroAndCidadeNomeAndCidadeEstadoNome(Long clienteId, String cep, String numero, String cidadeNome, String cidadeEstadoNome);
+    Boolean existsByUserIdAndCepAndNumeroAndCidadeNomeAndCidadeEstadoNome(Long userId, String cep, String numero, String cidadeNome, String cidadeEstadoNome);
 
-    Boolean existsByClienteIdAndCepAndNumeroAndCidadeNomeAndCidadeEstadoNomeAndLogradouroAndComplementoAndBairro(Long clienteId,
+    Boolean existsByUserIdAndCepAndNumeroAndCidadeNomeAndCidadeEstadoNomeAndLogradouroAndComplementoAndBairro(Long userId,
                                                                                                                  String cep, String numero,
                                                                                                                  String cidadeNome, String cidadeEstadoNome,
                                                                                                                  String logradouro, String complemento,
