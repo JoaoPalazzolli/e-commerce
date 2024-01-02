@@ -1,20 +1,19 @@
 package br.com.project.ECommerce.dto.auth;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
+@SuperBuilder
 @Data
-public class RegisterRequestDTO implements Serializable {
+public class RegisterUserDTO implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -22,9 +21,5 @@ public class RegisterRequestDTO implements Serializable {
     private String email;
     private String password;
     private String nomeCompleto;
-    private String cpf;
-    private String telefones;
-    @JsonFormat(pattern = "dd/MM/yyyy")
-    private LocalDate dataNascimento;
-
+    private Set<String> telefones;
 }
