@@ -168,14 +168,14 @@
 			</activation>
 			<properties>
 				<build.profile.id>dev</build.profile.id>
-				<profile.active>dev</profile.active>
+				<profileActive>dev</profileActive>
 			</properties>
 		</profile>
 		<profile>
 			<id>prod</id>
 			<properties>
 				<build.profile.id>prod</build.profile.id>
-				<profile.active>prod</profile.active>
+				<profileActive>prod</profileActive>
 			</properties>
 		</profile>
 	</profiles>
