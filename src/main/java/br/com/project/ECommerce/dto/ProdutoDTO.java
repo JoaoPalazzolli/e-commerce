@@ -1,15 +1,12 @@
 package br.com.project.ECommerce.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @NoArgsConstructor
 @Data
@@ -27,6 +24,6 @@ public class ProdutoDTO extends RepresentationModel<ProdutoDTO> implements Seria
     private Double preco;
     private Integer estoque;
     private LocalDateTime publicado;
-    private Set<CategoriaDTO> categorias = new HashSet<>();
+    private List<CategoriaDTO> categorias;
     private String imagem;
 }
