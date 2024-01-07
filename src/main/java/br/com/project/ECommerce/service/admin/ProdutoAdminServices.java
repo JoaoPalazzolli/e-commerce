@@ -16,9 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -59,7 +58,7 @@ public class ProdutoAdminServices {
 
         var categorias = produtoDTO.getCategorias().stream()
                 .map(x -> categoriaRepository.findByNome(x.getNome())
-                        .orElseThrow()).collect(Collectors.toSet());
+                        .orElseThrow()).toList();
 
         var produto = Mapper.parseObject(produtoDTO, Produto.class);
 
@@ -84,14 +83,14 @@ public class ProdutoAdminServices {
 
         var categorias = produtoDTO.getCategorias().stream()
                 .map(x -> categoriaRepository.findByNome(x.getNome())
-                        .orElseThrow()).collect(Collectors.toSet());
+                        .orElseThrow()).toList();
 
         var produtoAntigo = produtoRepository.findById(produtoDTO.getId()).orElseThrow();
 
         if (produtoRepository.existsByDescricaoAndMarca(
                 produtoDTO.getDescricao(), produtoDTO.getMarca()) &&
-                !produtoAntigo.getDescricao().equalsIgnoreCase(produtoDTO.getDescricao()))
-            throw new ConflictExceptions();
+                !produtoAntigo.getDescricao().equalsIgnoreCase(produtoDTO.getDescricao())) // verificar com vendedor
+            throw new ConflictExceptions();                                                // ao inves de descricao
 
         var produtoNovo = Mapper.parseObject(produtoDTO, Produto.class);
 
@@ -120,7 +119,7 @@ public class ProdutoAdminServices {
         return ResponseEntity.noContent().build();
     }
 
-    private void verificarSalvarCategorias(Set<CategoriaDTO> nomes){
+    private void verificarSalvarCategorias(List<CategoriaDTO> nomes){
         nomes.forEach(x ->{
             if(!categoriaRepository.existsByNome(x.getNome())){
                 LOGGER.info("Salvando Categoria");
