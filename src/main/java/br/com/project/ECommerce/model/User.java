@@ -12,7 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Set;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,7 +20,7 @@ import java.util.Set;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @SuperBuilder
 @Entity
-public class User implements Serializable {
+public abstract class User implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -44,9 +44,10 @@ public class User implements Serializable {
     @Builder.Default private final LocalDateTime contaCriada = LocalDateTime.now();
 
     @OneToMany(mappedBy = "user")
-    private Set<Endereco> enderecos;
+    private List<Endereco> enderecos;
 
     @ElementCollection
     @CollectionTable(name = "telefone")
-    private Set<String> telefones;
+    @Column(name = "telefones", unique = true)
+    private List<String> telefones;
 }
