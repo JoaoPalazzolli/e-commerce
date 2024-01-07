@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "estados")
@@ -29,5 +29,5 @@ public class Estado implements Serializable {
     private String nome;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "estado")
-    private Set<Cidade> cidades;
+    private List<Cidade> cidades;
 }
