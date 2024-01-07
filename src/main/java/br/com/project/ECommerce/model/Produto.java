@@ -9,8 +9,7 @@ import lombok.NoArgsConstructor;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "produto")
@@ -49,6 +48,6 @@ public class Produto implements Serializable {
     @JoinTable(name = "produto_categoria",
             joinColumns = {@JoinColumn(name = "produto_id")},
             inverseJoinColumns = {@JoinColumn(name = "categoria_id")})
-    private Set<Categoria> categorias;
+    private List<Categoria> categorias;
 
 }
