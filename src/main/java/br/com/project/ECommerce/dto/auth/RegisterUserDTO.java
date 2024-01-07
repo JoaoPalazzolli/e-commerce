@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 @NoArgsConstructor
@@ -21,5 +22,5 @@ public class RegisterUserDTO implements Serializable {
     private String email;
     private String password;
     private String nomeCompleto;
-    private Set<String> telefones;
+    private List<String> telefones;
 }
