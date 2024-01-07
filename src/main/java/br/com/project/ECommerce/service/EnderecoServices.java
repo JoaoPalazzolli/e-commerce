@@ -109,7 +109,7 @@ public class EnderecoServices {
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional
     public ResponseEntity<EnderecoDTO> updateAddress(EnderecoDTO enderecoDTO){
         LOGGER.info("Atualizando Endereço");
 
@@ -145,7 +145,7 @@ public class EnderecoServices {
         return ResponseEntity.ok(dto);
     }
 
-    @Transactional(readOnly = false)
+    @Transactional
     public ResponseEntity<?> deleteAddress(Long id){
         LOGGER.info("Deletando Endereço");
 
