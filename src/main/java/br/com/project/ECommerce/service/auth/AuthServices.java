@@ -1,17 +1,16 @@
 package br.com.project.ECommerce.service.auth;
 
+import br.com.project.ECommerce.dto.UserDTO;
 import br.com.project.ECommerce.dto.auth.RegisterPessoaFisicaDTO;
 import br.com.project.ECommerce.dto.auth.RegisterPessoaJuridicaDTO;
+import br.com.project.ECommerce.mapper.Mapper;
 import br.com.project.ECommerce.model.PessoaFisica;
 import br.com.project.ECommerce.model.PessoaJuridica;
-import br.com.project.ECommerce.model.User;
 import br.com.project.ECommerce.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Set;
 
 @Service
 public class AuthServices {
@@ -60,12 +59,7 @@ public class AuthServices {
 
 
     public ResponseEntity<?> teste(){
-        var u = userRepository.findById(2L).orElseThrow();
-        if(u instanceof PessoaJuridica){
-            System.out.println("PESSOA JURI");
-        } else {
-            System.out.println("PESSOA FISICA");
-        }
+
 
         return ResponseEntity.ok(userRepository.findAll());
     }
